@@ -7,7 +7,7 @@ const collName = "vocab";
 const settings = {useUnifiedTopology: true};
 
 const getVocab = () => {
-    const promise = new Promise((reject, resolve) => {
+    const promise = new Promise((resolve, reject) => {
         MongoClient.connect(DB_URL, settings, function(err,client){
             if(err){
                 reject(err);
@@ -21,14 +21,40 @@ const getVocab = () => {
                     } else {
                         resolve(docs);
                         client.close();
-                    }
-                })
-            }
-        })
+                    };
+                });
+            };
+        });
     });
     return promise;
-}
+};
+
+const addVocab = (card) => {
+    const promise = new Promise((resolve, reject) => {
+        MongoClient.connect(DB_URL, settings, async function(err, client) {
+            if(err){
+                reject(err);
+            } else {
+                console.log('Connected to DB Server for POST');
+                const db = client.db(dbName);
+                const collection = db.collection(collName);
+                await collection.insertOne(card, (err, result) => {
+                    if(err){
+                        reject(err);
+                    } else{
+                        resolve(result.ops[0]);
+                        client.close();
+                    };
+                });
+            };
+        });
+    });
+    return promise;
+};
 
 module.exports = {
-    getVocab
+    getVocab,
+    addVocab,
+    // editVocab,
+    // deleteVocab
 }
