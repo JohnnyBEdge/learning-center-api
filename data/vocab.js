@@ -75,9 +75,35 @@ const deleteVocab = (id) => {
     return promise;
 };
 
+const editVocab = (id, card) => {
+    const promise = new Promise((resolve, reject) => {
+        MongoClient.connect(DB_URL, settings, async function(err, client){
+            if(err){
+                reject(err);
+            } else {
+                console.log("Successfully connect to DB for PUT");
+                const db = client.db(dbName);
+                const collection = db.collection(collName);
+                await collection.replaceOne({_id:ObjectID(id)},
+                    card,
+                    {upsert: true},
+                    (err, result) => {
+                        if(err){
+                            reject(err);
+                        } else {
+                            resolve({updated_id: id});
+                            client.close();
+                        }
+                    })
+            }
+        })
+    });
+    return promise;
+};
+
 module.exports = {
     getVocab,
     addVocab,
-    // editVocab,
+    editVocab,
     deleteVocab
 }

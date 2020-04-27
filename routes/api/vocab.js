@@ -3,7 +3,7 @@ const router = express.Router();
 const {
     getVocab,
     addVocab,
-    // editVocab,
+    editVocab,
     deleteVocab
 } = require('../../data/vocab')
 
@@ -38,6 +38,16 @@ router.delete('/:id', async function(req, res, next){
         res.status(500).send("Internal server error; check logs");
     };
 });
+
+router.put('/:id', async function(req, res, next){
+    try{ 
+        const data = await editVocab(req.params.id, req.body);
+        res.send(data);
+    } catch(err){
+        console.log(err);
+        res.status(500).send("Internal server error; check logs");
+    }
+} )
 
 
 
