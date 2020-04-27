@@ -8,14 +8,14 @@ const settings = {useUnifiedTopology: true};
 
 const getVocab = () => {
     const promise = new Promise((resolve, reject) => {
-        MongoClient.connect(DB_URL, settings, function(err,client){
+        MongoClient.connect(DB_URL, settings, async function(err,client){
             if(err){
                 reject(err);
             } else {
                 console.log("Successfully connected to DB for GET");
                 const db = client.db(dbName);
                 const collection = db.collection(collName);
-                collection.find({}).toArray(function(err, docs){
+                await collection.find({}).toArray(function(err, docs){
                     if(err){
                         reject(err);
                     } else {
@@ -52,9 +52,32 @@ const addVocab = (card) => {
     return promise;
 };
 
+const deleteVocab = (id) => {
+    const promise = new Promise((resolve, reject) => {
+        MongoClient.connect(DB_URL, settings, async function(err, client){
+            if(err){
+                reject(err);
+            } else {
+                console.log("Successfully connect to DB for DELETE");
+                const db = client.db(dbName);
+                const collection = db.collection(collName);
+                await collection.deleteOne({_id: ObjectID(id)}, function(err, result){
+                    if(err){
+                        reject(err);
+                    } else {
+                        resolve({deleted_id: id});
+                        client.close();
+                    }
+                })
+            }
+        })
+    });
+    return promise;
+};
+
 module.exports = {
     getVocab,
     addVocab,
     // editVocab,
-    // deleteVocab
+    deleteVocab
 }

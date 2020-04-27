@@ -4,7 +4,7 @@ const {
     getVocab,
     addVocab,
     // editVocab,
-    // deleteVocab
+    deleteVocab
 } = require('../../data/vocab')
 
 /* GET home page. */
@@ -26,7 +26,19 @@ router.post('/', async function(req, res, next){
     } catch(err){
         console.log(err);
         res.status(500).send("Internal server error; check logs");
-    }
-})
+    };
+});
+
+router.delete('/:id', async function(req, res, next){
+    try{
+        const data = await deleteVocab(req.params.id);
+        res.send(data);
+    } catch(err){
+        console.log(err);
+        res.status(500).send("Internal server error; check logs");
+    };
+});
+
+
 
 module.exports = router;
