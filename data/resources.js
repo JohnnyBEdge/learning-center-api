@@ -29,9 +29,32 @@ const getResources = () => {
     return promise;
 };
 
+const addResource = (resource) => {
+    const promise = new Promise((resolve, reject) => {
+        MongoClient.connect(DB_URL, settings, async function(err, client){
+            if(err){
+                reject(err)
+            } else {
+                console.log("Successfully connect to DB for POST");
+                const db = client.db(dbName);
+                const collection = db.collection(collName);
+                await collection.insertOne(resource, (err, result) => {
+                    if(err){
+                        console.log(err);
+                    } else {
+                        resolve(result.ops[0]);
+                        client.close();
+                    }
+                })
+            }
+        })
+    });
+    return promise;
+};
+
 module.exports = {
     getResources,
-    // addResource,
+    addResource,
     // editResource,
     // deleteResource
 }
