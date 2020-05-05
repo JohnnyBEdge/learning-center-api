@@ -1,6 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
-const DB_URL = process.env.DB_URL
+const DB_URL = process.env.DB_URL;
 
 const dbName = "learning_center";
 const collName = "vocab";
