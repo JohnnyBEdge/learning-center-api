@@ -104,10 +104,36 @@ const deleteResource = (id) => {
     return promise;
 }
 
+const editResource = (id, resource) => {
+    const promise = new Promise((resolve, reject) =>{
+            MongoClient.connect(DB_URL, settings, async function(err, client){
+                if(err){
+                    console.log(err);
+                } else {
+                    console.log("Successfully connect to DB for PUT.");
+                    const db = client.db(dbName);
+                    const collection = db.collection(collName);
+                    collection.replaceOne({_id:ObjectID(id)},
+                    resource,
+                    {upsert:true},
+                    (err, result)=>{
+                        if(err){
+                            console.log(err);
+                        } else {
+                            resolve({updated_id:id})
+                            client.close()
+                        }
+                    })
+                }
+            })
+    });
+    return promise;
+};
+
 module.exports = {
     getResources,
     addResource,
     deleteResource,
-    // editResource,
+    editResource,
 
 }
