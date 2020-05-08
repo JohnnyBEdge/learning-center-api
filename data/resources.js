@@ -104,6 +104,32 @@ const deleteResource = (id) => {
     return promise;
 }
 
+// const editResource = (id, resource) => {
+//     const promise = new Promise((resolve, reject) =>{
+//             MongoClient.connect(DB_URL, settings, async function(err, client){
+//                 if(err){
+//                     console.log(err);
+//                 } else {
+//                     console.log("Successfully connect to DB for PUT.");
+//                     const db = client.db(dbName);
+//                     const collection = db.collection(collName);
+//                     collection.replaceOne({_id:ObjectID(id)},
+//                     resource,
+//                     {upsert:true},
+//                     (err, result)=>{
+//                         if(err){
+//                             console.log(err);
+//                         } else {
+//                             resolve({updated_id:id})
+//                             client.close()
+//                         }
+//                     })
+//                 }
+//             })
+//     });
+//     return promise;
+// };
+
 const editResource = (id, resource) => {
     const promise = new Promise((resolve, reject) =>{
             MongoClient.connect(DB_URL, settings, async function(err, client){
@@ -113,17 +139,25 @@ const editResource = (id, resource) => {
                     console.log("Successfully connect to DB for PUT.");
                     const db = client.db(dbName);
                     const collection = db.collection(collName);
-                    collection.replaceOne({_id:ObjectID(id)},
-                    resource,
-                    {upsert:true},
-                    (err, result)=>{
+                    collection.update(
+                        {_id:ObjectID(id)},
+                        {$set:{
+                            resource_type: resource.resource_type,
+                            title: resource.title,
+                            author: resource.author,
+                            url: resource.url,
+                            keywords: resource.keywords
+                        }},
+                        {upsert:true},
+                    (err, result) => {
                         if(err){
                             console.log(err);
                         } else {
                             resolve({updated_id:id})
                             client.close()
                         }
-                    })
+                    }
+                    )
                 }
             })
     });

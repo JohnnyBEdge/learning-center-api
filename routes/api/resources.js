@@ -37,7 +37,8 @@ router.delete('/:id', async function(req, res, next){
     };
 });
 
-router.put('/:id', async function(req, res){
+router.patch('/:id', async function(req, res){
+    console.log(req.body, req.params.id)
     try{
         const data = await editResource(req.params.id, req.body);
         res.send(data);
